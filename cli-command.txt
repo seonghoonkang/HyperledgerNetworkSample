@@ -1,0 +1,25 @@
+peer channel create -o orderer0.kvote.com:7050 -c kvotechannel -f ./channel-artifacts/channel1.tx
+peer channel create -o orderer1.kvote.com:7050 -c kvotechannel -f ./channel-artifacts/channel1.tx
+
+peer chaincode list -C kvotechannel --installed
+peer chaincode list -C kvotechannel --installed --peerAddresses peer4.org1.kvote.com:7051
+peer chaincode list -C kvotechannel --instantiated
+peer chaincode list -C kvotechannel --instantiated --peerAddresses peer0.org1.kvote.com:7051
+
+peer chaincode instantiate -o orderer0.kvote.com:7050 -C kvotechannel -n fabcar -l golang -v 1.3 -c '{"Args":["Init",""]}' -P 'OR ("Org1MSP.peer")'
+
+peer chaincode invoke -n fabcar -c '{"Args":["registProducts", "goods", "7", "apply"]}' -C kvotechannel
+
+peer chaincode list -C kvotechannel --installed --peerAddresses peer2.org1.kvote.com
+
+
+peer chaincode instantiate -o orderer0.kvote.com:7050 -C kvotechannel -n fabcar -l golang -v 1.3 -c {"Args":["init",""]} -P OR ('Org1MSP.peer')
+Error: could not assemble transaction, err Proposal response was not successful, error code 500, msg failed to execute transaction 94627f60c30631acff3248776e89bcff1052b72f74e9e03dfd90758c9cf28817: timeout expired while starting chaincode fabcar:1.3 for transaction 94627f60c30631acff3248776e89bcff1052b72f74e9e03dfd90758c9cf28817
++ res=1
++ set +x
+!!!!!!!!!!!!!!! Chaincode instantiation on peer0.org1 on channel 'kvotechannel' failed !!!!!!!!!!!!!!!!
+========= ERROR !!! FAILED to execute End-2-End Scenario ===========
+
+          #- CORE_PEER_ENDORSER_ENABLED=true
+
+

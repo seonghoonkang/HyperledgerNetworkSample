@@ -1,0 +1,128 @@
+version: '3.5'
+
+networks:
+  kvote:
+    external:
+        name: kvote-net
+services:
+
+    orderer1.kvote.com:
+        container_name: orderer1.kvote.com
+        image: hyperledger/fabric-orderer
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=kvote-net
+            - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+#            - ORDERER_GENERAL_LOGLEVEL=DEBUG
+            - ORDERER_GENERAL_LOGLEVEL=INFO
+            - ORDERER_GENERAL_LOCALMSPID=kvoteMSP
+            - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+            - ORDERER_GENERAL_GENESISMETHOD=file
+            - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/artifacts/orderer.genesis.block
+            - ORDERER_GENERAL_TLS_ENABLED=true
+            - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+            - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+            - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+            - ORDERER_KAFKA_VERSION=0.9.0.1
+            - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
+            - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
+            - ORDERER_KAFKA_VERBOSE=true
+        ports:
+            - '7050:7050'
+        command: orderer
+        volumes:
+            - ./channel-artifacts:/var/hyperledger/orderer/artifacts
+            - ./crypto-config/ordererOrganizations/kvote.com/orderers/orderer1.kvote.com/msp:/var/hyperledger/orderer/msp
+            - ./crypto-config/ordererOrganizations/kvote.com/orderers/orderer1.kvote.com/tls:/var/hyperledger/orderer/tls
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+        networks:
+            - kvote
+            
+    kafka1:
+        container_name: kafka1
+        image: hyperledger/fabric-kafka
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=kvote-net
+            - KAFKA_BORKER_ID=1
+            - KAFKA_MIN_INSYNC_REPLICAS=2
+            - KAFKA_DEFAULT_REPLICATION_FACTOR=4
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181,zookeeper3:2181,zookeeper4:2181
+            - KAFKA_MESSAGE_MAX_BYTES=103809024 # 99 * 1024 *1024 B
+            - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024
+            - KAFKA_UNCLEAN_LEADER_LECTION_ENABLE=false
+        ports:
+            - '9092:9092'
+        restart: always
+        networks:
+            - kvote
+          
+    zookeeper2:
+        container_name: zookeeper2
+        image: hyperledger/fabric-zookeeper
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=kvote-net
+            - ZOO_MY_ID=3
+            - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888 server.4=zookeeper3:2888:3888 server.5=zookeeper4:2888:3888
+        ports:
+            - '2181'
+            - '2888'
+            - '3888'
+        restart: always
+        networks:
+          - kvote
+          
+    peer2.org1.kvote.com:
+        container_name: peer2.org1.kvote.com
+        image: hyperledger/fabric-peer
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=kvote-net
+#            - CORE_LOGGING_LEVEL=DEBUG
+            - CORE_LOGGING_LEVEL=INFO
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_PEER_ID=peer2.org1.kvote.com
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_ENDORSER_ENABLED=true
+            - CORE_PEER_ADDRESSAUTODETECT=true
+            - CORE_PEER_NETWORKID=KVOTE-NET
+            - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+            - CORE_PEER_LOCALMSPID=Org1MSP
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.kvote.com:7051 peer1.org2.kvote.com:7051 peer3.org1.kvote.com:7051 peer4.org1.kvote.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.kvote.com:7051
+            - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
+            - CORE_PEER_GOSSIP_ORGLEADER=false
+            - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+            - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb2Admin
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb2Admin!
+        ports:
+            - '7051:7051'
+            - '7053:7053'
+        command: peer node start
+        volumes:
+            - /var/run/docker.sock:/host/var/run/docker.sock
+            - ./crypto-config/peerOrganizations/org1.kvote.com/peers/peer2.org1.kvote.com/msp:/etc/hyperledger/fabric/msp
+            - ./crypto-config/peerOrganizations/org1.kvote.com/peers/peer2.org1.kvote.com/tls:/etc/hyperledger/fabric/tls
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        depends_on:
+            - couchdb2
+        networks:
+            - kvote
+
+    couchdb2:
+        container_name: couchdb2
+        image: hyperledger/fabric-couchdb
+        # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+        # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=kvote-net
+            - COUCHDB_USER=couchdb2Admin
+            - COUCHDB_PASSWORD=couchdb2Admin!
+        ports:
+            - 5984:5984
+        networks:
+            - kvote
+

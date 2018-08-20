@@ -1,0 +1,31 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# ---------------------------------------------------------------------------
+# "OrdererOrgs" - Definition of organizations managing orderer nodes
+# ---------------------------------------------------------------------------
+OrdererOrgs:
+  # ---------------------------------------------------------------------------
+  # MjmallOrderer
+  # ---------------------------------------------------------------------------
+  - Name: KvoteMain 
+    Domain: kvote.com
+    Template:
+      Count: 4
+# ---------------------------------------------------------------------------
+# "PeerOrgs" - Definition of organizations managing peer nodes
+# ---------------------------------------------------------------------------
+PeerOrgs:
+  # ---------------------------------------------------------------------------
+  # Store1
+  # ---------------------------------------------------------------------------
+  - Name: Org1
+    Domain: org1.kvote.com
+    EnableNodeOUs: true
+    Template:
+      Count: 5
+    Users:
+      Count: 1
+
