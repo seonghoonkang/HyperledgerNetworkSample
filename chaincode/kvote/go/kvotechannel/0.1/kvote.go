@@ -11,7 +11,7 @@ import (
 
 type VoteChaincode struct{}
 
-//투표 index, 선거ID, Enc(투표데이터), 시그니처(전자서명+유권자pubkey)
+//index, ID, Enc(데이터), 시그니처(전자서명+pubkey)
 type CommonVO struct {
 	ComIdx        string `json:"cidx"`
 	ComId         string `json:"cid"`
