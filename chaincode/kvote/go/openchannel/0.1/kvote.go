@@ -11,7 +11,7 @@ import (
 
 type VoteChaincode struct{}
 
-//투표 index, 선거ID, Enc(투표데이터), 시그니처(전자서명+유권자pubkey)
+//index, ID, Enc(데이터), 시그니처(전자서명+pubkey)
 type CommonVO struct {
 	ComIdx        string `json:"cidx"`
 	ComId         string `json:"cid"`
@@ -55,7 +55,7 @@ func (t *VoteChaincode) writeLedger(stub shim.ChaincodeStubInterface, args []str
 
 	voteVO := CommonVO{args[0], args[1], args[2], args[3], args[4]}
 	voteVOAsBytes, _ := json.Marshal(voteVO)
-	//선거id+유권자 서명을 key 데이터로 사용한다.
+	//id+서명을 key 데이터로 사용한다.
 	err := stub.PutState(voteVO.ComId+voteVO.ComSign, voteVOAsBytes)
 	if err != nil {
 		return shim.Error("Ledger putstate error")
