@@ -1,4 +1,4 @@
-## docker swarm 설정
+## Step 1. Docker swarm 설정
 
 1. Master 서버에서 docker swarm init 을 실행한다.
 2. docker swarm join-token manager 를 실행하여 조인 토큰을 발행한다.
@@ -6,7 +6,7 @@
 4. docker network create --attachable --driver overlay [네트워크 이름] 을 실행한다.
 5. docker network ls 를 실행하여 swarm overlay로 생성된 것을 확인한다.
 
-## 인증서 생성 및 채널관련 파일 생성 
+## Step 2. 인증서 생성 및 채널관련 파일 생성 
 
 cryptogen generate --config=./crypto-config.yaml
 
@@ -24,6 +24,6 @@ configtxgen -profile OrgsChannel2 -outputCreateChannelTx ./channel-artifacts/cha
 configtxgen -profile OrgsChannel2 -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors2.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
 
 
-### 도커 컨테이너 실행
+### Step 3. 도커 컨테이너 실행
 docker-compose -f bc-node1.yaml down
 docker-compose -f bc-node1.yaml up -d
