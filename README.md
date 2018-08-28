@@ -1,5 +1,5 @@
 ## 준비
- Hyperledger fabric images 가져오기 : curl -sSL https://goo.gl/6wtTN5 | bash -s 1.2.0
+ Hyperledger fabric images 가져오기 : curl -sSL https://goo.gl/6wtTN5 | bash -s 1.2.0 <br>
  Hyperledger fabric samples binery 가져오기 : curl -sSL http://bit.ly/2ysbOFE | bash -s 1.2.0
 
 ## Step 1. Docker swarm 설정
