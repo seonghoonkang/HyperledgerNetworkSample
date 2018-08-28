@@ -19,16 +19,16 @@ mkdir channel-artifacts <br>
 export FABRIC_CFG_PATH=$PWD <br>
 configtxgen -profile OrgsOrdererGenesis -outputBlock ./channel-artifacts/orderer.genesis.block
 
-export CHANNEL_NAME=kvotechannel
-configtxgen -profile OrgsChannel1 -outputCreateChannelTx ./channel-artifacts/channel1.tx -channelID $CHANNEL_NAME
-configtxgen -profile OrgsChannel1 -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors1.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+export CHANNEL_NAME=kvotechannel <br>
+configtxgen -profile OrgsChannel1 -outputCreateChannelTx ./channel-artifacts/channel1.tx -channelID $CHANNEL_NAME <br>
+configtxgen -profile OrgsChannel1 -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors1.tx -channelID $CHANNEL_NAME -asOrg Org1MSP <br>
 
 
-export CHANNEL_NAME=openchannel
-configtxgen -profile OrgsChannel2 -outputCreateChannelTx ./channel-artifacts/channel2.tx -channelID $CHANNEL_NAME
-configtxgen -profile OrgsChannel2 -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors2.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+export CHANNEL_NAME=openchannel <br>
+configtxgen -profile OrgsChannel2 -outputCreateChannelTx ./channel-artifacts/channel2.tx -channelID $CHANNEL_NAME <br>
+configtxgen -profile OrgsChannel2 -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors2.tx -channelID $CHANNEL_NAME -asOrg Org1MSP <br>
 
 
 ### Step 3. 도커 컨테이너 실행
-docker-compose -f bc-node1.yaml down
+docker-compose -f bc-node1.yaml down<br>
 docker-compose -f bc-node1.yaml up -d
