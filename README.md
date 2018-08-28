@@ -15,8 +15,8 @@
 
 cryptogen generate --config=./crypto-config.yaml
 
-mkdir channel-artifacts
-export FABRIC_CFG_PATH=$PWD
+mkdir channel-artifacts <br>
+export FABRIC_CFG_PATH=$PWD <br>
 configtxgen -profile OrgsOrdererGenesis -outputBlock ./channel-artifacts/orderer.genesis.block
 
 export CHANNEL_NAME=kvotechannel
