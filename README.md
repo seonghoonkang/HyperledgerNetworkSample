@@ -29,6 +29,6 @@ configtxgen -profile OrgsChannel2 -outputCreateChannelTx ./channel-artifacts/cha
 configtxgen -profile OrgsChannel2 -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors2.tx -channelID $CHANNEL_NAME -asOrg Org1MSP <br>
 
 
-### Step 3. 도커 컨테이너 실행
+## Step 3. 도커 컨테이너 실행
 docker-compose -f bc-node1.yaml down<br>
 docker-compose -f bc-node1.yaml up -d
