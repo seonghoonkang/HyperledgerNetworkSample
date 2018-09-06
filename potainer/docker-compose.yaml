@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+        portainer:
+                image: portainer/portainer
+                command: -H tcp://127.0.0.1:2375 unix:///var/run/docker.sock
+                container_name: portainer
+                restart: always
+                network_mode: 'bridge'
+                volumes:
+                        - ${USERDIR}/portainer_data:/data
+                        - /var/run/docker.sock:/var/run/docker.sock
+                ports:
+                        - "9010:9000"
+volumes:
+        portainer_data:
