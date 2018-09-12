@@ -82,6 +82,7 @@ services:
             - CORE_PEER_PROFILE_ENABLED=true
             - CORE_PEER_ENDORSER_ENABLED=false
             - CORE_PEER_ADDRESSAUTODETECT=true
+            - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
             - CORE_PEER_NETWORKID=KVOTE-NET
             - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
             - CORE_PEER_LOCALMSPID=Org1MSP
