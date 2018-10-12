@@ -7,7 +7,7 @@
 
 1. Master 서버에서 docker swarm init 을 실행한다.
 2. docker swarm join-token manager 를 실행하여 조인 토큰을 발행한다.
-3. Sub 서버에서 Master에서 생성한 토큰을 실행한다.
+3. Sub에 Master에서 생성한 토큰을 실행한다.
 4. docker network create --attachable --driver overlay [네트워크 이름] 을 실행한다.
 5. docker network ls 를 실행하여 swarm overlay로 생성된 것을 확인한다.
 
